@@ -85,18 +85,26 @@ function main() {
         gamesWithCount.set(gameId, count);
     }
 
-    let gameIdSum = 0;
+    let totalPower = 0;
     for (const [gameId, count] of gamesWithCount) {
-        if (
-            count.red <= MAX_RED &&
-            count.green <= MAX_GREEN &&
-            count.blue <= MAX_BLUE
-        ) {
-            gameIdSum += gameId;
-        }
+        const power = count.red * count.green * count.blue;
+        totalPower += power;
     }
 
-    console.log(gameIdSum);
+    console.log(totalPower);
+
+    // let gameIdSum = 0;
+    // for (const [gameId, count] of gamesWithCount) {
+    //     if (
+    //         count.red <= MAX_RED &&
+    //         count.green <= MAX_GREEN &&
+    //         count.blue <= MAX_BLUE
+    //     ) {
+    //         gameIdSum += gameId;
+    //     }
+    // }
+
+    // console.log(gameIdSum);
 }
 
 main();

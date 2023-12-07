@@ -1,0 +1,18 @@
+{
+    "name": "day-2",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "scripts": {
+        "build": "tsc",
+        "start": "NODE_OPTIONS=--enable-source-maps node dist/index.js",
+        "dev": "yarn build && yarn start"
+    },
+    "dependencies": {
+        "@types/node": "^20.10.4",
+        "typescript": "^5.3.3"
+    }
+}

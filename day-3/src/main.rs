@@ -4,6 +4,7 @@ use std::io::Read;
 const INPUT_FILE: &str = "./input.txt";
 
 const EMPTY: char = '.';
+const GEAR: char = '*';
 
 #[derive(Debug)]
 struct Grid {
@@ -28,6 +29,7 @@ struct GridCell {
 enum GridCellContent {
     Num { num: u32 },
     Symbol { symbol: char },
+    GearSymbol { symbol: char },
     Empty,
 }
 
@@ -56,6 +58,20 @@ impl Grid {
         for row in &self.rows {
             for cell in &row.cells {
                 if cell.is_symbol() {
+                    cells.push(cell);
+                }
+            }
+        }
+
+        cells
+    }
+
+    fn gear_symbols(&self) -> Vec<&GridCell> {
+        let mut cells = Vec::new();
+
+        for row in &self.rows {
+            for cell in &row.cells {
+                if cell.is_gear_symbol() {
                     cells.push(cell);
                 }
             }
@@ -125,6 +141,16 @@ impl GridCell {
         }
     }
 
+    fn gear_symbol(x_start: usize, y_start: usize, symbol: char) -> Self {
+        GridCell {
+            x_start,
+            y_start,
+            x_end: x_start,
+            y_end: y_start,
+            content: GridCellContent::GearSymbol { symbol },
+        }
+    }
+
     fn empty(x_start: usize, y_start: usize) -> Self {
         GridCell {
             x_start,
@@ -143,6 +169,10 @@ impl GridCell {
         self.content.is_symbol()
     }
 
+    fn is_gear_symbol(&self) -> bool {
+        self.content.is_gear_symbol()
+    }
+
     fn is_empty(&self) -> bool {
         self.content.is_empty()
     }
@@ -159,6 +189,14 @@ impl GridCellContent {
 
     fn is_symbol(&self) -> bool {
         if let GridCellContent::Symbol { .. } = self {
+            true
+        } else {
+            false
+        }
+    }
+
+    fn is_gear_symbol(&self) -> bool {
+        if let GridCellContent::GearSymbol { .. } = self {
             true
         } else {
             false
@@ -210,6 +248,8 @@ impl From<String> for Grid {
 
                     if c == EMPTY {
                         grid.append_cell(GridCell::empty(x, y));
+                    } else if c == GEAR {
+                        grid.append_cell(GridCell::gear_symbol(x, y, c));
                     } else {
                         grid.append_cell(GridCell::symbol(x, y, c));
                     }
@@ -253,10 +293,28 @@ fn main() {
 
     let mut sum = 0;
 
-    for symbol in grid.symbols() {
-        for neighbor in grid.neighbors_of(&symbol) {
-            if let GridCellContent::Num { num } = &neighbor.content {
-                sum += num;
+    for symbol in grid.gear_symbols() {
+        let neighbors: Vec<&GridCell> = grid
+            .neighbors_of(&symbol)
+            .into_iter()
+            .filter(|neighbor| neighbor.is_num())
+            .collect();
+
+        if neighbors.len() == 2 {
+            match (neighbors.get(0), neighbors.get(1)) {
+                (
+                    Some(GridCell {
+                        content: GridCellContent::Num { num: one, .. },
+                        ..
+                    }),
+                    Some(GridCell {
+                        content: GridCellContent::Num { num: two, .. },
+                        ..
+                    }),
+                ) => {
+                    sum += one * two;
+                }
+                _ => panic!("Expected two number neighbors"),
             }
         }
     }

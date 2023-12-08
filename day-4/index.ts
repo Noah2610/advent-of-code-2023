@@ -1,14 +1,9 @@
-const fs = require("fs");
+import fs from "fs";
 
 const INPUT_FILE = "input.txt";
 const inputLines = fs.readFileSync(INPUT_FILE, "utf8").split("\n");
 
-/**
- * @param {string} s
- * @returns {number}
- * @throws {Error}
- */
-function toInt(s) {
+function toInt(s: string): number {
     const n = parseInt(s);
     if (Number.isNaN(n)) {
         throw new Error(`Couldn't parse "${s}" to integer`);
@@ -16,19 +11,11 @@ function toInt(s) {
     return n;
 }
 
-/**
- * @param {string} line
- * @returns {number[]}
- */
-function parseNumbers(line) {
+function parseNumbers(line: string): number[] {
     return line.trim().replace(/\s+/g, " ").split(" ").map(toInt);
 }
 
-/**
- * @param {string} line
- * @returns {number}
- */
-function calcPoints(line) {
+function calcPoints(line: string): number {
     const [_, s] = line.split(":");
     const [winningLine, havingLine] = s.split("|");
 

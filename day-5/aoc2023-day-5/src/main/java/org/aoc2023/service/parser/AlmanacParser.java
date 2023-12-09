@@ -22,7 +22,7 @@ public class AlmanacParser implements Parser<Almanac> {
                 new SequenceParser<>(List.of(
                         new TokenParser("seeds: "),
                         new RepeatParser(new SequenceParser(List.of(
-                                new MapperParser<Seed, Integer>(new IntegerParser(), n -> new Seed(Id.of(n))),
+                                new MapperParser<Seed, Long>(new IntegerParser(), n -> new Seed(Id.of(n))),
                                 new OptionalParser(new SpaceParser())
                         ))),
                         new NewlineParser(),
@@ -47,9 +47,9 @@ public class AlmanacParser implements Parser<Almanac> {
                                                         new IntegerParser()
                                                 )),
                                                 idsAndSpaces -> {
-                                                    var dstId = (Integer) idsAndSpaces.get(0);
-                                                    var srcId = (Integer) idsAndSpaces.get(2);
-                                                    var range = (Integer) idsAndSpaces.get(4);
+                                                    var dstId = (Long) idsAndSpaces.get(0);
+                                                    var srcId = (Long) idsAndSpaces.get(2);
+                                                    var range = (Long) idsAndSpaces.get(4);
                                                     return new EntityMapConfig(srcId, dstId, range);
                                                 }
                                         ),

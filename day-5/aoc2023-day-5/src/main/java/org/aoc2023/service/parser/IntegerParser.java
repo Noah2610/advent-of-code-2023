@@ -4,18 +4,18 @@ import org.aoc2023.exception.ParseException;
 import org.aoc2023.model.ParseResult;
 import org.aoc2023.model.Parser;
 
-public class IntegerParser implements Parser<Integer> {
+public class IntegerParser implements Parser<Long> {
     @Override
-    public ParseResult<Integer> parse(String input) throws ParseException {
+    public ParseResult<Long> parse(String input) throws ParseException {
         ParseResult<String> result = ParserUtil.extractWhile1(input, c -> Character.isDigit(c));
         String digitsS = result.value();
         String rest = result.rest();
 
-        Integer num = null;
+        Long num = null;
         try {
-            num = Integer.parseInt(digitsS);
+            num = Long.parseLong(digitsS);
         } catch (NumberFormatException ex) {
-            throw new ParseException(String.format("couldn't parse string \"%s\" to integer for IntegerParse", digitsS));
+            throw new ParseException(String.format("couldn't parse string \"%s\" to integer for IntegerParser", digitsS));
         }
 
         return new ParseResult<>(num, rest);

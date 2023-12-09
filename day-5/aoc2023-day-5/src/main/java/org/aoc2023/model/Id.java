@@ -1,7 +1,7 @@
 package org.aoc2023.model;
 
-public record Id(int id) {
-    public static Id of(int id) {
+public record Id(long id) {
+    public static Id of(long id) {
         return new Id(id);
     }
 

@@ -19,12 +19,14 @@ public class RepeatParser<T> implements Parser<List<T>> {
         List<T> parsed = new LinkedList<>();
 
         String rest = input;
+        ParseException lastEx = null;
 
         while (true) {
             ParseResult<T> result = null;
             try {
                 result = parser.parse(rest);
             } catch (ParseException ex) {
+                lastEx = ex;
                 break;
             }
 
@@ -33,7 +35,7 @@ public class RepeatParser<T> implements Parser<List<T>> {
         }
 
         if (parsed.isEmpty()) {
-            throw new ParseException("RepeatParser expected at least one parse iteration");
+            throw new ParseException("RepeatParser expected at least one parse iteration", lastEx);
         }
 
         return new ParseResult<>(parsed, rest);

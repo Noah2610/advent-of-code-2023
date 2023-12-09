@@ -18,6 +18,11 @@ public abstract class EntityBase implements Entity, WithId {
     }
 
     @Override
+    public int compare(WithId other) {
+        return Long.compare(getId().id(), other.getId().id());
+    }
+
+    @Override
     public String toString() {
         return String.format("%s-%s", getClass().getSimpleName(), id);
     }

@@ -5,8 +5,21 @@ public class LookupException extends Exception {
         super(msg, ex);
     }
 
+    public LookupException(String msg) {
+        super(msg);
+    }
+
+    public LookupException(LookupException ex) {
+        this(ex.getMessage(), ex.getCause());
+    }
+
     @Override
     public String toString() {
-        return String.format("Lookup failed: %s, caused by: %s", getMessage(), getCause());
+        Throwable cause = getCause();
+        if (cause == null) {
+            return String.format("Lookup failed: %s", getMessage());
+        } else {
+            return String.format("Lookup failed: %s, caused by: %s", getMessage(), getCause());
+        }
     }
 }

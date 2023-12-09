@@ -14,7 +14,8 @@ import java.util.List;
 
 import static org.aoc2023.model.entity.EntityType.*;
 
-public class SeedToLocationLookup {
+public class SeedToLocationLookup implements Lookup<Seed, Location> {
+    @Override
     public Location lookup(Almanac almanac, Seed seed) throws LookupException {
         List<EntityType> entityTypeOrder = List.of(
                 SEED,

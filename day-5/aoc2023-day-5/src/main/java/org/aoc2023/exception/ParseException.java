@@ -13,6 +13,10 @@ public class ParseException extends Exception {
         super(newErrorMessage(msg), ex);
     }
 
+    public ParseException(String msg, ParseException ex) {
+        super(newErrorMessage(msg), ex);
+    }
+
     public <T> ParseException(Class<T> resultType, EntityMapCreationException ex) {
         super(newErrorMessage(resultType), ex);
     }
@@ -23,5 +27,15 @@ public class ParseException extends Exception {
 
     private static <T> String newErrorMessage(Class<T> resultType) {
         return newErrorMessage(resultType.getName());
+    }
+
+    @Override
+    public String toString() {
+        Throwable cause = getCause();
+        if (cause == null) {
+            return getMessage();
+        } else {
+            return String.format("%s, caused by: %s", getMessage(), cause);
+        }
     }
 }

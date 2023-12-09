@@ -9,11 +9,11 @@ import java.util.List;
 
 public class HumidityToLocation extends EntityMapBase<Humidity, Location> {
     public HumidityToLocation(List<EntityMapConfig> maps) throws EntityInstantiationException {
-        super(maps, Humidity.class, Location.class);
+        super(maps, Humidity::new, Location::new);
     }
 
     public HumidityToLocation() {
-        super(Humidity.class, Location.class);
+        super(Humidity::new, Location::new);
     }
 
     @Override

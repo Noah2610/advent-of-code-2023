@@ -23,7 +23,7 @@ class EntityMapBaseTest {
         );
 
         try {
-            EntityMap<Seed, Soil> map = new EntityMapBase(configs, Seed.class, Soil.class) {
+            EntityMap<Seed, Soil> map = new EntityMapBase<>(configs, Seed::new, Soil::new) {
                 @Override
                 public EntityMapType getEntityMapType() {
                     return new EntityMapType(EntityType.SEED, EntityType.SOIL);

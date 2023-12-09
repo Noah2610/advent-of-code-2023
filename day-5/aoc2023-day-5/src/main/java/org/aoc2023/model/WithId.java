@@ -4,4 +4,6 @@ public interface WithId {
     Id getId();
 
     int compare(WithId other);
+
+    boolean isSmallerThan(WithId other);
 }

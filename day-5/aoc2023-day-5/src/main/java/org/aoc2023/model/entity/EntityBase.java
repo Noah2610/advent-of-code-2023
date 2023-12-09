@@ -23,6 +23,11 @@ public abstract class EntityBase implements Entity, WithId {
     }
 
     @Override
+    public boolean isSmallerThan(WithId other) {
+        return getId().id() < other.getId().id();
+    }
+
+    @Override
     public String toString() {
         return String.format("%s-%s", getClass().getSimpleName(), id);
     }

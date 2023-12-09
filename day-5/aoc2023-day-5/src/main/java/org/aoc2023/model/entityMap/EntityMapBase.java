@@ -6,33 +6,36 @@ import org.aoc2023.model.IdRange;
 import org.aoc2023.model.Range;
 import org.aoc2023.model.entity.Entity;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Function;
 
 public abstract class EntityMapBase<Src extends Entity, Dst extends Entity> implements EntityMap<Src, Dst> {
     private final Map<Range<Id>, Range<Id>> rangeMap;
-    private final Class<Src> srcClass;
-    private final Class<Dst> dstClass;
+//    private final Class<Src> srcClass;
+//    private final Class<Dst> dstClass;
+
+    private final Function<Id, Src> sourceCreator;
+    private final Function<Id, Dst> destinationCreator;
 
     protected EntityMapBase(
             List<EntityMapConfig> maps,
-            Class<Src> srcClass,
-            Class<Dst> dstClass
+            Function<Id, Src> sourceCreator,
+            Function<Id, Dst> destinationCreator
     ) throws EntityInstantiationException {
-        this(srcClass, dstClass);
+        this(sourceCreator, destinationCreator);
         addMaps(maps);
     }
 
     protected EntityMapBase(
-            Class<Src> srcClass,
-            Class<Dst> dstClass
+            Function<Id, Src> sourceCreator,
+            Function<Id, Dst> destinationCreator
     ) {
+        this.sourceCreator = sourceCreator;
+        this.destinationCreator = destinationCreator;
         this.rangeMap = new HashMap<>();
-        this.srcClass = srcClass;
-        this.dstClass = dstClass;
     }
 
     @Override
@@ -51,46 +54,61 @@ public abstract class EntityMapBase<Src extends Entity, Dst extends Entity> impl
 
     @Override
     public Dst getDestinationFor(Src src) throws EntityInstantiationException {
-        Id dstId = rangeMap.entrySet().stream()
-                .filter(entry -> entry.getKey().contains(src.getId()))
-                .findFirst()
-                .map(entry -> {
-                    Id offset = entry.getKey().offsetOf(src.getId());
-                    return entry.getValue().withOffset(offset);
-                })
-                .orElseGet(() -> src.getId());
-        return newDst(dstId);
+        Map.Entry<Range<Id>, Range<Id>> found = null;
+        for (var entry : rangeMap.entrySet()) {
+            if (entry.getKey().contains(src.getId())) {
+                found = entry;
+                break;
+            }
+        }
+
+        if (found == null) {
+            return newDst(src.getId());
+        }
+
+        Id offset = found.getKey().offsetOf(src.getId());
+        return newDst(found.getValue().withOffset(offset));
+
+//        Id dstId = rangeMap.entrySet().stream()
+//                .filter(entry -> entry.getKey().contains(src.getId()))
+//                .findFirst()
+//                .map(entry -> {
+//                    Id offset = entry.getKey().offsetOf(src.getId());
+//                    return entry.getValue().withOffset(offset);
+//                })
+//                .orElseGet(() -> src.getId());
+//        return newDst(dstId);
     }
 
     private Src newSrc(Id id) throws EntityInstantiationException {
-        return newEntity(id, srcClass);
+        return sourceCreator.apply(id);
 
     }
 
     private Dst newDst(Id id) throws EntityInstantiationException {
-        return newEntity(id, dstClass);
+        return destinationCreator.apply(id);
     }
 
-    private <T extends Entity> T newEntity(Id id, Class<T> clazz) throws EntityInstantiationException {
-        try {
-            return clazz.getDeclaredConstructor(Id.class).newInstance(id);
-        } catch (InvocationTargetException | InstantiationException | IllegalAccessException |
-                 NoSuchMethodException ex) {
-            throw new EntityInstantiationException(ex);
-        }
-    }
+//    private <T extends Entity> T newEntity(Id id, Class<T> clazz) throws EntityInstantiationException {
+//        try {
+//            return clazz.getDeclaredConstructor(Id.class).newInstance(id);
+//        } catch (InvocationTargetException | InstantiationException | IllegalAccessException |
+//                 NoSuchMethodException ex) {
+//            throw new EntityInstantiationException(ex);
+//        }
+//    }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         EntityMapBase<?, ?> that = (EntityMapBase<?, ?>) o;
-        return Objects.equals(rangeMap, that.rangeMap) && Objects.equals(srcClass, that.srcClass) && Objects.equals(dstClass, that.dstClass);
+        return Objects.equals(rangeMap, that.rangeMap) && Objects.equals(sourceCreator, that.sourceCreator) && Objects.equals(destinationCreator, that.destinationCreator);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(rangeMap, srcClass, dstClass);
+        return Objects.hash(rangeMap, sourceCreator, destinationCreator);
     }
 
     @Override

@@ -9,11 +9,11 @@ import java.util.List;
 
 public class SoilToFertilizer extends EntityMapBase<Soil, Fertilizer> {
     public SoilToFertilizer(List<EntityMapConfig> maps) throws EntityInstantiationException {
-        super(maps, Soil.class, Fertilizer.class);
+        super(maps, Soil::new, Fertilizer::new);
     }
 
     public SoilToFertilizer() {
-        super(Soil.class, Fertilizer.class);
+        super(Soil::new, Fertilizer::new);
     }
 
     @Override

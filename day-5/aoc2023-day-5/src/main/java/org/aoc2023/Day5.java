@@ -31,7 +31,6 @@ public class Day5 {
 //        this.logger.addHandler(new ConsoleHandler());
     }
 
-
     public void run() throws IOException, ParseException, FinderException {
         logger.config("Creating AlmanacParser");
         Parser<Almanac> parser = new AlmanacParser();

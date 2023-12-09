@@ -9,11 +9,11 @@ import java.util.List;
 
 public class WaterToLight extends EntityMapBase<Water, Light> {
     public WaterToLight(List<EntityMapConfig> maps) throws EntityInstantiationException {
-        super(maps, Water.class, Light.class);
+        super(maps, Water::new, Light::new);
     }
 
     public WaterToLight() {
-        super(Water.class, Light.class);
+        super(Water::new, Light::new);
     }
 
     @Override

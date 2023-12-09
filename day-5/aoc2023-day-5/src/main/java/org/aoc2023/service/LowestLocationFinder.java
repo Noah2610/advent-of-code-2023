@@ -7,11 +7,9 @@ import org.aoc2023.model.entity.Location;
 import org.aoc2023.model.entity.Seed;
 
 import java.util.Comparator;
-import java.util.Optional;
 import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.StreamSupport;
 
 @FunctionalInterface
 interface ThrowableComparator<T> {
@@ -34,26 +32,52 @@ public class LowestLocationFinder implements Finder<Location> {
     }
 
     public Location find(Almanac almanac) throws FinderException {
-        Optional<Location> lowestLocationOpt = null;
+//        Optional<Location> lowestLocationOpt = null;
+        Location lowestLocation = null;
+
         try {
-            lowestLocationOpt = almanac.getSeedsRanges().stream()
-                    .flatMap(seedRange -> {
-                        logger.info(String.format("Flat mapping seed range: %s", seedRange));
-                        return StreamSupport.stream(seedRange.spliterator(), false);
-                    })
-                    .map(mapCatchEx(seed -> {
-                        logger.info(String.format("Looking up location for seed: %s", seed));
-                        return lookup.lookup(almanac, seed);
-                    }))
-                    .min(compareCatchEx((a, b) -> {
-                        logger.info(String.format("Comparing locations: %s and %s", a, b));
-                        return a.compare(b);
-                    }));
+            for (var seedRange : almanac.getSeedsRanges()) {
+                for (var seed : seedRange) {
+                    Location location = lookup.lookup(almanac, seed);
+                    if (lowestLocation == null || location.isSmallerThan(lowestLocation)) {
+                        lowestLocation = location;
+                    }
+                }
+            }
+
+//            Stream<Location> locations = almanac.getSeedsRanges().stream()
+//                    .flatMap(seedRange -> {
+////                        logger.info(String.format("Flat mapping seed range: %s", seedRange));
+//                        return StreamSupport.stream(seedRange.spliterator(), false);
+//                    })
+//                    .map(mapCatchEx(seed -> {
+////                        logger.info(String.format("Looking up location for seed: %s", seed));
+//                        return lookup.lookup(almanac, seed);
+//                    }));
+//
+//            for (Iterator<Location> it = locations.iterator(); it.hasNext(); ) {
+//                var location = it.next();
+//                if (lowestLocation == null || location.isSmallerThan(lowestLocation)) {
+//                    lowestLocation = location;
+//                }
+//            }
+
+//                    .min(compareCatchEx((a, b) -> {
+//                        logger.info(String.format("Comparing locations: %s and %s", a, b));
+//                        return a.compare(b);
+//                    }));
         } catch (RuntimeException ex) {
             throw new FinderException((LookupException) ex.getCause());
+        } catch (LookupException e) {
+            throw new FinderException(e);
         }
 
-        return lowestLocationOpt.orElseThrow(() -> new FinderException("Couldn't find closest location"));
+        if (lowestLocation == null) {
+            throw new FinderException("Couldn't find closest location");
+        }
+
+        return lowestLocation;
+        //return lowestLocationOpt.orElseThrow(() -> new FinderException("Couldn't find closest location"));
     }
 
     private <T> Comparator<T> compareCatchEx(ThrowableComparator<T> predicate) {

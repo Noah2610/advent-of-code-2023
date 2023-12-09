@@ -9,11 +9,11 @@ import java.util.List;
 
 public class SeedToSoil extends EntityMapBase<Seed, Soil> {
     public SeedToSoil(List<EntityMapConfig> maps) throws EntityInstantiationException {
-        super(maps, Seed.class, Soil.class);
+        super(maps, Seed::new, Soil::new);
     }
 
     public SeedToSoil() {
-        super(Seed.class, Soil.class);
+        super(Seed::new, Soil::new);
     }
 
     @Override

@@ -9,11 +9,11 @@ import java.util.List;
 
 public class TemperatureToHumidity extends EntityMapBase<Temperature, Humidity> {
     public TemperatureToHumidity(List<EntityMapConfig> maps) throws EntityInstantiationException {
-        super(maps, Temperature.class, Humidity.class);
+        super(maps, Temperature::new, Humidity::new);
     }
 
     public TemperatureToHumidity() {
-        super(Temperature.class, Humidity.class);
+        super(Temperature::new, Humidity::new);
     }
 
     @Override

@@ -8,6 +8,7 @@ import org.aoc2023.model.Id;
 import org.aoc2023.model.entity.EntityType;
 import org.aoc2023.model.entity.Seed;
 import org.aoc2023.model.entityMap.*;
+import org.aoc2023.service.parser.AlmanacParser;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;

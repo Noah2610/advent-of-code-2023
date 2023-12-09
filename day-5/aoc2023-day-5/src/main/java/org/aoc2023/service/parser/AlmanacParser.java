@@ -1,4 +1,4 @@
-package org.aoc2023.service;
+package org.aoc2023.service.parser;
 
 import org.aoc2023.exception.EntityMapCreationException;
 import org.aoc2023.exception.ParseException;

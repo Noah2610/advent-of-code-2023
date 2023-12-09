@@ -85,12 +85,6 @@ public class EntityRange<T extends Entity> implements Range<T> {
         };
     }
 
-    // https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Spliterator.html
-//    @Override
-//    public Spliterator<T> spliterator() {
-//        return new EntityRangeSpliterator<T>(this, (id) -> newEntity(id, entityClass));
-//    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

@@ -1,6 +1,6 @@
 package org.aoc2023.model;
 
-public interface Range<T> {
+public interface Range<T> extends Iterable<T> {
     T start();
 
     T end();

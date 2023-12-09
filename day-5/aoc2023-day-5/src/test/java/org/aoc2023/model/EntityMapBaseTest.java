@@ -1,6 +1,6 @@
 package org.aoc2023.model;
 
-import org.aoc2023.exception.EntityMapCreationException;
+import org.aoc2023.exception.EntityInstantiationException;
 import org.aoc2023.model.entity.EntityType;
 import org.aoc2023.model.entity.Seed;
 import org.aoc2023.model.entity.Soil;
@@ -36,7 +36,7 @@ class EntityMapBaseTest {
             assertEquals(new Soil(new Id(25)), map.getDestinationFor(new Seed(new Id(15))));
             assertEquals(new Soil(new Id(29)), map.getDestinationFor(new Seed(new Id(19))));
             assertEquals(new Soil(new Id(20)), map.getDestinationFor(new Seed(new Id(20))));
-        } catch (EntityMapCreationException e) {
+        } catch (EntityInstantiationException e) {
             throw new RuntimeException(e);
         }
     }

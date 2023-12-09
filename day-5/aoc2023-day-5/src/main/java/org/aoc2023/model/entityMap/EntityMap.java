@@ -1,16 +1,16 @@
 package org.aoc2023.model.entityMap;
 
-import org.aoc2023.exception.EntityMapCreationException;
+import org.aoc2023.exception.EntityInstantiationException;
 import org.aoc2023.model.entity.Entity;
 
 import java.util.List;
 
 public interface EntityMap<Src extends Entity, Dst extends Entity> {
-    void addMaps(List<EntityMapConfig> maps) throws EntityMapCreationException;
+    void addMaps(List<EntityMapConfig> maps) throws EntityInstantiationException;
 
-    void addMap(EntityMapConfig map) throws EntityMapCreationException;
+    void addMap(EntityMapConfig map) throws EntityInstantiationException;
 
-    Dst getDestinationFor(Src src) throws EntityMapCreationException;
+    Dst getDestinationFor(Src src) throws EntityInstantiationException;
 
     EntityMapType getEntityMapType();
 }

@@ -1,6 +1,6 @@
 package org.aoc2023.model.entityMap;
 
-import org.aoc2023.exception.EntityMapCreationException;
+import org.aoc2023.exception.EntityInstantiationException;
 import org.aoc2023.model.Id;
 import org.aoc2023.model.IdRange;
 import org.aoc2023.model.Range;
@@ -21,7 +21,7 @@ public abstract class EntityMapBase<Src extends Entity, Dst extends Entity> impl
             List<EntityMapConfig> maps,
             Class<Src> srcClass,
             Class<Dst> dstClass
-    ) throws EntityMapCreationException {
+    ) throws EntityInstantiationException {
         this(srcClass, dstClass);
         addMaps(maps);
     }
@@ -36,21 +36,21 @@ public abstract class EntityMapBase<Src extends Entity, Dst extends Entity> impl
     }
 
     @Override
-    public void addMaps(List<EntityMapConfig> maps) throws EntityMapCreationException {
+    public void addMaps(List<EntityMapConfig> maps) throws EntityInstantiationException {
         for (var map : maps) {
             addMap(map);
         }
     }
 
     @Override
-    public void addMap(EntityMapConfig map) throws EntityMapCreationException {
+    public void addMap(EntityMapConfig map) throws EntityInstantiationException {
         Range<Id> srcRange = new IdRange(Id.of(map.source()), map.range());
         Range<Id> dstRange = new IdRange(Id.of(map.destination()), map.range());
         rangeMap.put(srcRange, dstRange);
     }
 
     @Override
-    public Dst getDestinationFor(Src src) throws EntityMapCreationException {
+    public Dst getDestinationFor(Src src) throws EntityInstantiationException {
         Id dstId = rangeMap.entrySet().stream()
                 .filter(entry -> entry.getKey().contains(src.getId()))
                 .findFirst()
@@ -62,21 +62,21 @@ public abstract class EntityMapBase<Src extends Entity, Dst extends Entity> impl
         return newDst(dstId);
     }
 
-    private Src newSrc(Id id) throws EntityMapCreationException {
+    private Src newSrc(Id id) throws EntityInstantiationException {
         return newEntity(id, srcClass);
 
     }
 
-    private Dst newDst(Id id) throws EntityMapCreationException {
+    private Dst newDst(Id id) throws EntityInstantiationException {
         return newEntity(id, dstClass);
     }
 
-    private <T extends Entity> T newEntity(Id id, Class<T> clazz) throws EntityMapCreationException {
+    private <T extends Entity> T newEntity(Id id, Class<T> clazz) throws EntityInstantiationException {
         try {
             return clazz.getDeclaredConstructor(Id.class).newInstance(id);
         } catch (InvocationTargetException | InstantiationException | IllegalAccessException |
                  NoSuchMethodException ex) {
-            throw new EntityMapCreationException(ex);
+            throw new EntityInstantiationException(ex);
         }
     }
 

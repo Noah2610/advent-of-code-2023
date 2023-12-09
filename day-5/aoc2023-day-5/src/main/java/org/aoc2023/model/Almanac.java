@@ -13,11 +13,11 @@ import java.util.List;
 import java.util.Map;
 
 public class Almanac {
-    private final List<Seed> seeds;
+    private final List<Range<Seed>> seedRanges;
     private final Map<EntityMapType, EntityMap<?, ?>> maps;
 
-    public Almanac(List<Seed> seeds, List<EntityMap<?, ?>> maps) {
-        this.seeds = seeds;
+    public Almanac(List<Range<Seed>> seedRanges, List<EntityMap<?, ?>> maps) {
+        this.seedRanges = seedRanges;
         this.maps = new HashMap<>();
 
         for (var map : maps) {
@@ -25,8 +25,8 @@ public class Almanac {
         }
     }
 
-    public List<Seed> getSeeds() {
-        return seeds;
+    public List<Range<Seed>> getSeedsRanges() {
+        return seedRanges;
     }
 
     public <Src extends Entity, Dst extends Entity> EntityMap<Src, Dst> getMap(
@@ -55,7 +55,7 @@ public class Almanac {
     public String toString() {
         return String.format(
                 "Seeds: %s\nEntityMaps: %s",
-                seeds,
+                seedRanges,
                 Arrays.toString(maps.entrySet().toArray())
         );
     }

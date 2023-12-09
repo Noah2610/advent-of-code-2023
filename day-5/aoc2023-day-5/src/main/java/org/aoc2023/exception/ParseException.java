@@ -9,7 +9,7 @@ public class ParseException extends Exception {
         super(newErrorMessage(resultType));
     }
 
-    public ParseException(String msg, EntityMapCreationException ex) {
+    public ParseException(String msg, EntityInstantiationException ex) {
         super(newErrorMessage(msg), ex);
     }
 
@@ -17,7 +17,7 @@ public class ParseException extends Exception {
         super(newErrorMessage(msg), ex);
     }
 
-    public <T> ParseException(Class<T> resultType, EntityMapCreationException ex) {
+    public <T> ParseException(Class<T> resultType, EntityInstantiationException ex) {
         super(newErrorMessage(resultType), ex);
     }
 

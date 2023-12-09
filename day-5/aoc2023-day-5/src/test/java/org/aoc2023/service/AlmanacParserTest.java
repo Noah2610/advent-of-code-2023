@@ -1,9 +1,10 @@
 package org.aoc2023.service;
 
-import org.aoc2023.exception.EntityMapCreationException;
+import org.aoc2023.exception.EntityInstantiationException;
 import org.aoc2023.exception.EntityMapNotFoundException;
 import org.aoc2023.exception.ParseException;
 import org.aoc2023.model.Almanac;
+import org.aoc2023.model.EntityRange;
 import org.aoc2023.model.Id;
 import org.aoc2023.model.entity.EntityType;
 import org.aoc2023.model.entity.Seed;
@@ -18,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class AlmanacParserTest {
 
     @Test
-    void parse() throws ParseException, EntityMapNotFoundException, EntityMapCreationException {
+    void parse() throws ParseException, EntityMapNotFoundException, EntityInstantiationException {
         AlmanacParser parser = new AlmanacParser();
 
         Almanac almanac = parser.parse("""
@@ -46,7 +47,7 @@ class AlmanacParserTest {
                 0 1 1
                 """).value();
 
-        assertEquals(List.of(new Seed(Id.of(0)), new Seed(Id.of(1))), almanac.getSeeds());
+        assertEquals(List.of(new EntityRange<Seed>(new Seed(Id.of(0)), 1, Seed.class)), almanac.getSeedsRanges());
         assertEquals(new SeedToSoil(List.of(new EntityMapConfig(1, 0, 1))).toString(), almanac.getMap(EntityType.SEED, EntityType.SOIL).toString());
         assertEquals(new SoilToFertilizer(List.of(new EntityMapConfig(1, 0, 1))).toString(), almanac.getMap(EntityType.SOIL, EntityType.FERTILIZER).toString());
         assertEquals(new FertilizerToWater(List.of(new EntityMapConfig(1, 0, 1))).toString(), almanac.getMap(EntityType.FERTILIZER, EntityType.WATER).toString());

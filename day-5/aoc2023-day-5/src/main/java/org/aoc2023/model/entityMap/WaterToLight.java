@@ -1,6 +1,6 @@
 package org.aoc2023.model.entityMap;
 
-import org.aoc2023.exception.EntityMapCreationException;
+import org.aoc2023.exception.EntityInstantiationException;
 import org.aoc2023.model.entity.EntityType;
 import org.aoc2023.model.entity.Light;
 import org.aoc2023.model.entity.Water;
@@ -8,7 +8,7 @@ import org.aoc2023.model.entity.Water;
 import java.util.List;
 
 public class WaterToLight extends EntityMapBase<Water, Light> {
-    public WaterToLight(List<EntityMapConfig> maps) throws EntityMapCreationException {
+    public WaterToLight(List<EntityMapConfig> maps) throws EntityInstantiationException {
         super(maps, Water.class, Light.class);
     }
 

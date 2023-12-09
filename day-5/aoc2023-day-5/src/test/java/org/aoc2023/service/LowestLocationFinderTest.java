@@ -54,6 +54,6 @@ class LowestLocationFinderTest {
                 56 93 4
                 """).value();
 
-        assertEquals(new Location(Id.of(35)), finder.find(almanac));
+        assertEquals(new Location(Id.of(46)), finder.find(almanac));
     }
 }

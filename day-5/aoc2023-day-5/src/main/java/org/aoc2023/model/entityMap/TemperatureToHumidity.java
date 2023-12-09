@@ -1,6 +1,6 @@
 package org.aoc2023.model.entityMap;
 
-import org.aoc2023.exception.EntityMapCreationException;
+import org.aoc2023.exception.EntityInstantiationException;
 import org.aoc2023.model.entity.EntityType;
 import org.aoc2023.model.entity.Humidity;
 import org.aoc2023.model.entity.Temperature;
@@ -8,7 +8,7 @@ import org.aoc2023.model.entity.Temperature;
 import java.util.List;
 
 public class TemperatureToHumidity extends EntityMapBase<Temperature, Humidity> {
-    public TemperatureToHumidity(List<EntityMapConfig> maps) throws EntityMapCreationException {
+    public TemperatureToHumidity(List<EntityMapConfig> maps) throws EntityInstantiationException {
         super(maps, Temperature.class, Humidity.class);
     }
 

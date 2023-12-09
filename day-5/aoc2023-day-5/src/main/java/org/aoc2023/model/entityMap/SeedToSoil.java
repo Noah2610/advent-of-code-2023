@@ -1,6 +1,6 @@
 package org.aoc2023.model.entityMap;
 
-import org.aoc2023.exception.EntityMapCreationException;
+import org.aoc2023.exception.EntityInstantiationException;
 import org.aoc2023.model.entity.EntityType;
 import org.aoc2023.model.entity.Seed;
 import org.aoc2023.model.entity.Soil;
@@ -8,7 +8,7 @@ import org.aoc2023.model.entity.Soil;
 import java.util.List;
 
 public class SeedToSoil extends EntityMapBase<Seed, Soil> {
-    public SeedToSoil(List<EntityMapConfig> maps) throws EntityMapCreationException {
+    public SeedToSoil(List<EntityMapConfig> maps) throws EntityInstantiationException {
         super(maps, Seed.class, Soil.class);
     }
 

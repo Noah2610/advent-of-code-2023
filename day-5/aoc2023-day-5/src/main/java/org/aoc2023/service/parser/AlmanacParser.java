@@ -1,11 +1,8 @@
 package org.aoc2023.service.parser;
 
-import org.aoc2023.exception.EntityMapCreationException;
+import org.aoc2023.exception.EntityInstantiationException;
 import org.aoc2023.exception.ParseException;
-import org.aoc2023.model.Almanac;
-import org.aoc2023.model.Id;
-import org.aoc2023.model.ParseResult;
-import org.aoc2023.model.Parser;
+import org.aoc2023.model.*;
 import org.aoc2023.model.entity.Seed;
 import org.aoc2023.model.entityMap.*;
 
@@ -18,26 +15,28 @@ public class AlmanacParser implements Parser<Almanac> {
 
     @Override
     public ParseResult<Almanac> parse(String input) throws ParseException {
-        return new MapperParser<>(
+        Parser<Almanac> parser = new MapperParser<>(
                 new SequenceParser<>(List.of(
                         new TokenParser("seeds: "),
-                        new RepeatParser(new SequenceParser(List.of(
-                                new MapperParser<Seed, Long>(new IntegerParser(), n -> new Seed(Id.of(n))),
-                                new OptionalParser(new SpaceParser())
+                        new RepeatParser<>(new SequenceParser<>(List.of(
+                                new MapperParser<>(new IntegerParser(), n -> new Seed(Id.of(n))),
+                                new SpaceParser(),
+                                new IntegerParser(),
+                                new OptionalParser<>(new SpaceParser())
                         ))),
                         new NewlineParser(),
-                        new RepeatParser(new SequenceParser(List.of(
-                                new OneOfParser(List.of(
-                                        new MapperParser(new TokenParser("seed-to-soil" + " map:"), (_s) -> new SeedToSoil()),
-                                        new MapperParser(new TokenParser("soil-to-fertilizer" + " map:"), (_s) -> new SoilToFertilizer()),
-                                        new MapperParser(new TokenParser("fertilizer-to-water" + " map:"), (_s) -> new FertilizerToWater()),
-                                        new MapperParser(new TokenParser("water-to-light" + " map:"), (_s) -> new WaterToLight()),
-                                        new MapperParser(new TokenParser("light-to-temperature" + " map:"), (_s) -> new LightToTemperature()),
-                                        new MapperParser(new TokenParser("temperature-to-humidity" + " map:"), (_s) -> new TemperatureToHumidity()),
-                                        new MapperParser(new TokenParser("humidity-to-location" + " map:"), (_s) -> new HumidityToLocation())
+                        new RepeatParser<>(new SequenceParser<>(List.of(
+                                new OneOfParser<>(List.of(
+                                        new MapperParser<>(new TokenParser("seed-to-soil" + " map:"), (_s) -> new SeedToSoil()),
+                                        new MapperParser<>(new TokenParser("soil-to-fertilizer" + " map:"), (_s) -> new SoilToFertilizer()),
+                                        new MapperParser<>(new TokenParser("fertilizer-to-water" + " map:"), (_s) -> new FertilizerToWater()),
+                                        new MapperParser<>(new TokenParser("water-to-light" + " map:"), (_s) -> new WaterToLight()),
+                                        new MapperParser<>(new TokenParser("light-to-temperature" + " map:"), (_s) -> new LightToTemperature()),
+                                        new MapperParser<>(new TokenParser("temperature-to-humidity" + " map:"), (_s) -> new TemperatureToHumidity()),
+                                        new MapperParser<>(new TokenParser("humidity-to-location" + " map:"), (_s) -> new HumidityToLocation())
                                 )),
                                 new NewlineParser(),
-                                new RepeatParser(new SequenceParser(List.of(
+                                new RepeatParser<>(new SequenceParser<>(List.of(
                                         new MapperParser<>(
                                                 new SequenceParser<>(List.of(
                                                         new IntegerParser(),
@@ -58,11 +57,21 @@ public class AlmanacParser implements Parser<Almanac> {
                         )))
                 )),
                 results -> {
-                    var seedsAndSpaces = (List<List<Object>>) results.get(1);
-                    List<Seed> seeds = new LinkedList<>();
+                    var seedRangesAndSpaces = (List<List<Object>>) results.get(1);
+                    List<Range<Seed>> seedRanges = new LinkedList<>();
 
-                    for (var seedAndSpace : seedsAndSpaces) {
-                        seeds.add((Seed) seedAndSpace.get(0));
+                    for (var seedOrRangeOrSpace : seedRangesAndSpaces) {
+                        Range<Seed> seedRange;
+                        try {
+                            seedRange = new EntityRange<>(
+                                    (Seed) seedOrRangeOrSpace.get(0),
+                                    (Long) seedOrRangeOrSpace.get(2),
+                                    Seed.class
+                            );
+                        } catch (EntityInstantiationException ex) {
+                            throw new ParseException("couldn't create EntityRange<Seed>", ex);
+                        }
+                        seedRanges.add(seedRange);
                     }
 
                     var mapDefs = (List<List<Object>>) results.get(3);
@@ -75,14 +84,16 @@ public class AlmanacParser implements Parser<Almanac> {
                             var mapConfig = (EntityMapConfig) mapConfigAndNewline.get(0);
                             try {
                                 entityMap.addMap(mapConfig);
-                            } catch (EntityMapCreationException ex) {
+                            } catch (EntityInstantiationException ex) {
                                 throw new ParseException("couldn't add EntityMapConfig to EntityMap", ex);
                             }
                         }
                         entityMaps.add(entityMap);
                     }
 
-                    return new Almanac(seeds, entityMaps);
-                }).parse(input);
+                    return new Almanac(seedRanges, entityMaps);
+                });
+
+        return parser.parse(input);
     }
 }

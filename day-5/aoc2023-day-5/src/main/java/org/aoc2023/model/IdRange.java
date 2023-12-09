@@ -1,5 +1,6 @@
 package org.aoc2023.model;
 
+import java.util.Iterator;
 import java.util.Objects;
 
 public class IdRange implements Range<Id> {
@@ -64,5 +65,23 @@ public class IdRange implements Range<Id> {
     @Override
     public String toString() {
         return String.format("start=%s, end=%s", start(), end());
+    }
+
+    @Override
+    public Iterator<Id> iterator() {
+        return new Iterator<>() {
+            private Id offset = start();
+
+            @Override
+            public boolean hasNext() {
+                return offset.id() + 1 < end().id();
+            }
+
+            @Override
+            public Id next() {
+                offset = Id.of(offset.id() + 1);
+                return offset;
+            }
+        };
     }
 }

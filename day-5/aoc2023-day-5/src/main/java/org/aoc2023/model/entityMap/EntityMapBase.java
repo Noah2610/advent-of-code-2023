@@ -2,6 +2,8 @@ package org.aoc2023.model.entityMap;
 
 import org.aoc2023.exception.EntityMapCreationException;
 import org.aoc2023.model.Id;
+import org.aoc2023.model.IdRange;
+import org.aoc2023.model.Range;
 import org.aoc2023.model.entity.Entity;
 
 import java.lang.reflect.InvocationTargetException;
@@ -11,7 +13,7 @@ import java.util.Map;
 import java.util.Objects;
 
 public abstract class EntityMapBase<Src extends Entity, Dst extends Entity> implements EntityMap<Src, Dst> {
-    private Map<Src, Dst> entityMap;
+    private final Map<Range<Id>, Range<Id>> rangeMap;
     private final Class<Src> srcClass;
     private final Class<Dst> dstClass;
 
@@ -20,9 +22,7 @@ public abstract class EntityMapBase<Src extends Entity, Dst extends Entity> impl
             Class<Src> srcClass,
             Class<Dst> dstClass
     ) throws EntityMapCreationException {
-        this.entityMap = new HashMap();
-        this.srcClass = srcClass;
-        this.dstClass = dstClass;
+        this(srcClass, dstClass);
         addMaps(maps);
     }
 
@@ -30,7 +30,7 @@ public abstract class EntityMapBase<Src extends Entity, Dst extends Entity> impl
             Class<Src> srcClass,
             Class<Dst> dstClass
     ) {
-        this.entityMap = new HashMap();
+        this.rangeMap = new HashMap<>();
         this.srcClass = srcClass;
         this.dstClass = dstClass;
     }
@@ -44,20 +44,22 @@ public abstract class EntityMapBase<Src extends Entity, Dst extends Entity> impl
 
     @Override
     public void addMap(EntityMapConfig map) throws EntityMapCreationException {
-        for (int i = 0; i < map.range(); i++) {
-            Src src = newSrc(new Id(map.source() + i));
-            Dst dst = newDst(new Id(map.destination() + i));
-            entityMap.put(src, dst);
-        }
+        Range<Id> srcRange = new IdRange(Id.of(map.source()), map.range());
+        Range<Id> dstRange = new IdRange(Id.of(map.destination()), map.range());
+        rangeMap.put(srcRange, dstRange);
     }
 
     @Override
     public Dst getDestinationFor(Src src) throws EntityMapCreationException {
-        Dst dst = entityMap.get(src);
-        if (dst == null) {
-            return newDst(src.getId());
-        }
-        return dst;
+        Id dstId = rangeMap.entrySet().stream()
+                .filter(entry -> entry.getKey().contains(src.getId()))
+                .findFirst()
+                .map(entry -> {
+                    Id offset = entry.getKey().offsetOf(src.getId());
+                    return entry.getValue().withOffset(offset);
+                })
+                .orElseGet(() -> src.getId());
+        return newDst(dstId);
     }
 
     private Src newSrc(Id id) throws EntityMapCreationException {
@@ -83,16 +85,16 @@ public abstract class EntityMapBase<Src extends Entity, Dst extends Entity> impl
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         EntityMapBase<?, ?> that = (EntityMapBase<?, ?>) o;
-        return Objects.equals(entityMap, that.entityMap) && Objects.equals(srcClass, that.srcClass) && Objects.equals(dstClass, that.dstClass);
+        return Objects.equals(rangeMap, that.rangeMap) && Objects.equals(srcClass, that.srcClass) && Objects.equals(dstClass, that.dstClass);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(entityMap, srcClass, dstClass);
+        return Objects.hash(rangeMap, srcClass, dstClass);
     }
 
     @Override
     public String toString() {
-        return entityMap.toString();
+        return rangeMap.toString();
     }
 }

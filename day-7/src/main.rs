@@ -9,8 +9,8 @@ const INPUT_FILE: &str = concat!(env!("CARGO_MANIFEST_DIR"), "/input.txt");
 fn main() -> Result<(), String> {
     let input = read_input();
 
-    let (hands, rest) =
-        service::parse_hands(&input).ok_or("Could not parse input as hands")?;
+    let (hands, rest) = service::parse_hands(&input.trim())
+        .ok_or("Could not parse input as hands")?;
     if !rest.trim().is_empty() {
         return Err(format!("Expected to parse full input: {}", rest));
     }

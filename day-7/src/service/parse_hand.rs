@@ -1,11 +1,9 @@
+use super::compute_kind;
 use crate::model::Bid;
 use crate::model::Card;
 use crate::model::Cards;
 use crate::model::Hand;
-use crate::model::Kind;
-use crate::model::Label;
 use crate::model::CARD_COUNT;
-use std::collections::HashMap;
 
 pub fn parse_hands(mut input: &str) -> Option<(Vec<Hand>, &str)> {
     let mut hands = Vec::new();
@@ -100,52 +98,14 @@ fn take_while1<F: Fn(char) -> bool>(
     return Some((&input[..index], &input[index..]));
 }
 
-fn compute_kind(cards: &Cards) -> Option<Kind> {
-    let mut counts = HashMap::<Label, u8>::new();
-
-    for card in cards {
-        counts.insert(
-            card.label.clone(),
-            counts.get(&card.label).unwrap_or(&0) + 1,
-        );
-    }
-
-    let mut has_two = false;
-    let mut has_three = false;
-    let mut has_one = false;
-
-    for count in counts.values() {
-        match count {
-            5 => return Some(Kind::FiveOfAKind),
-            4 => return Some(Kind::FourOfAKind),
-            3 if has_two => return Some(Kind::FullHouse),
-            3 => has_three = true,
-            2 if has_three => return Some(Kind::FullHouse),
-            2 if has_two => return Some(Kind::TwoPair),
-            2 => has_two = true,
-            1 => has_one = true,
-            _ => (),
-        }
-    }
-
-    return if has_three {
-        Some(Kind::ThreeOfAKind)
-    } else if has_two {
-        Some(Kind::OnePair)
-    } else if has_one {
-        Some(Kind::HighCard)
-    } else {
-        None
-    };
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::model::{Kind, Label};
 
     #[test]
     fn it_parses_hand() {
-        let hand = parse_hand("32T3K 765").unwrap();
+        let (hand, _) = parse_hand("32T3K 765").unwrap();
 
         assert_eq!(
             hand.cards,

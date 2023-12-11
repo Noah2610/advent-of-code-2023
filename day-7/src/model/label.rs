@@ -1,5 +1,3 @@
-use std::collections::HashMap;
-
 #[derive(Ord, PartialEq, Eq, Hash, Debug, Clone)]
 pub enum Label {
     A,
@@ -26,16 +24,23 @@ impl Label {
             A => 13,
             K => 12,
             Q => 11,
-            J => 10,
-            T => 9,
-            Nine => 8,
-            Eight => 7,
-            Seven => 6,
-            Six => 5,
-            Five => 4,
-            Four => 3,
-            Three => 2,
-            Two => 1,
+            J => 1,
+            T => 10,
+            Nine => 9,
+            Eight => 8,
+            Seven => 7,
+            Six => 6,
+            Five => 5,
+            Four => 4,
+            Three => 3,
+            Two => 2,
+        }
+    }
+
+    pub fn is_joker(&self) -> bool {
+        match self {
+            Label::J => true,
+            _ => false,
         }
     }
 }
@@ -79,19 +84,19 @@ impl std::fmt::Display for Label {
             f,
             "{}",
             match self {
-                A => 'A',
-                K => 'K',
-                Q => 'Q',
-                J => 'J',
-                T => 'T',
-                Nine => '9',
-                Eight => '8',
-                Seven => '7',
-                Six => '6',
-                Five => '5',
-                Four => '4',
-                Three => '3',
-                Two => '2',
+                A => 'A'.to_string(),
+                K => 'K'.to_string(),
+                Q => 'Q'.to_string(),
+                J => 'J'.to_string(),
+                T => 'T'.to_string(),
+                Nine => '9'.to_string(),
+                Eight => '8'.to_string(),
+                Seven => '7'.to_string(),
+                Six => '6'.to_string(),
+                Five => '5'.to_string(),
+                Four => '4'.to_string(),
+                Three => '3'.to_string(),
+                Two => '2'.to_string(),
             }
         )
     }

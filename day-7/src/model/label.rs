@@ -23,19 +23,19 @@ impl Label {
     pub fn strength(&self) -> u8 {
         use Label::*;
         match self {
-            A => 12,
-            K => 11,
-            Q => 10,
-            J => 9,
-            T => 8,
-            Nine => 7,
-            Eight => 6,
-            Seven => 5,
-            Six => 4,
-            Five => 3,
-            Four => 2,
-            Three => 1,
-            Two => 0,
+            A => 13,
+            K => 12,
+            Q => 11,
+            J => 10,
+            T => 9,
+            Nine => 8,
+            Eight => 7,
+            Seven => 6,
+            Six => 5,
+            Five => 4,
+            Four => 3,
+            Three => 2,
+            Two => 1,
         }
     }
 }

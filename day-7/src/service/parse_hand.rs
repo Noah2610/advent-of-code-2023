@@ -7,14 +7,29 @@ use crate::model::Label;
 use crate::model::CARD_COUNT;
 use std::collections::HashMap;
 
-pub fn parse_hand(input: &str) -> Option<Hand> {
+pub fn parse_hands(mut input: &str) -> Option<(Vec<Hand>, &str)> {
+    let mut hands = Vec::new();
+    while let Some((hand, rest)) = parse_hand(input) {
+        hands.push(hand);
+        if let Some((_, rest)) = parse_whitespace1(rest) {
+            input = rest;
+        } else {
+            input = rest;
+            break;
+        }
+    }
+
+    return Some((hands, input));
+}
+
+pub fn parse_hand(input: &str) -> Option<(Hand, &str)> {
     let (cards, input) = parse_cards(input)?;
     let (_, input) = parse_whitespace1(input)?;
     let (bid, input) = parse_bid(input)?;
 
     let kind = compute_kind(&cards)?;
 
-    return Some(Hand::new(cards, kind, bid));
+    return Some((Hand::new(cards, kind, bid), input));
 }
 
 fn parse_cards(mut input: &str) -> Option<(Cards, &str)> {

@@ -18,13 +18,13 @@ impl Kind {
         use Kind::*;
 
         match self {
-            FiveOfAKind => 6,
-            FourOfAKind => 5,
-            FullHouse => 4,
-            ThreeOfAKind => 3,
-            TwoPair => 2,
-            OnePair => 1,
-            HighCard => 0,
+            FiveOfAKind => 7,
+            FourOfAKind => 6,
+            FullHouse => 5,
+            ThreeOfAKind => 4,
+            TwoPair => 3,
+            OnePair => 2,
+            HighCard => 1,
         }
     }
 }

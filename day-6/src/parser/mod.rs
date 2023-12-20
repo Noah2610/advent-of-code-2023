@@ -1,3 +1,5 @@
+mod races_parser;
+
 use crate::model::{Race, Races, INT};
 
 type ParseResult<'a, T> = Result<(T, &'a str), String>;
